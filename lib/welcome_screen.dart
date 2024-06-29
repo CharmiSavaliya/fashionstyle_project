@@ -1,5 +1,5 @@
-import 'package:fashion_project/onboardingscreen.dart';
-import 'package:fashion_project/signinscreen.dart';
+import 'package:fashion_project/onboarding_screen.dart';
+import 'package:fashion_project/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -125,7 +125,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SignInscreen(),
+                  builder: (context) => const SignInScreen(),
                 ),
               ),
               child: RichText(
