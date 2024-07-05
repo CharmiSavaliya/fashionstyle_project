@@ -54,24 +54,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     try {
-      User? user = await AuthService().createUserWithEmailAndPassword(email, password);
-      if (user != null) {
+      dynamic user = await AuthService().createUserWithEmailAndPassword(email, password);
+      if (user is User) {
         await user.updateDisplayName(name);
-        Navigator.pushReplacement(
+        await Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const BottomNavigationbarScreen(),
           ),
         );
+      } else if (user is String) {
+        _showSnackBar(user);
       } else {
         _showSnackBar('Sign-up failed. Please try again.');
       }
     } catch (e) {
-      if (e is FirebaseAuthException) {
-        _showSnackBar('FirebaseAuthException: ${e.message}');
-      } else {
-        _showSnackBar('An error occurred. Please try again.');
-      }
+      print(e);
     }
   }
 
@@ -197,7 +195,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 40),
             GestureDetector(
-              onTap: _signUp,
+              onTap: () => _signUp(),
               child: Container(
                 width: 365,
                 height: 55,

@@ -1,7 +1,9 @@
+import 'package:fashion_project/auth_service.dart';
+import 'package:fashion_project/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -17,6 +19,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: GestureDetector(
+          child: Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () async {
+              await AuthService().signout();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SignInScreen()), // Adjust the route as needed
+              );
+            },
+            child: Container(
+              width: 105,
+              height: 50,
+              decoration: BoxDecoration(
+                color: const Color(0xff704F38),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(85),
+              ),
+              child: const Center(
+                child: Text(
+                  "Log Out",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10), // Optional: Adjust spacing between items
+        ],
+      ),
       body: Container(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -27,23 +82,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    width: 45,
-                    height: 45,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(85),
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                    ),
-                    child: const Icon(Icons.arrow_back),
-                  ),
-                ),
-                const SizedBox(height: 30),
                 const Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -56,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Don't worry, only you can see your personal \n     data. No one else will be able to see it.",
+                  "Don't worry, only you can see your personal data. No one else will be able to see it.",
                   style: TextStyle(
                     fontSize: 15,
                     color: Colors.grey,
@@ -122,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Name cannot be empty';
                     } else if (value.length < 8) {
-                      return 'Name must be insert';
+                      return 'Name must be at least 8 characters';
                     }
                     return null;
                   },
@@ -183,17 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 30),
                 GestureDetector(
-                  onTap: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      // Navigate or perform other actions upon form validation
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
-                        ),
-                      );
-                    }
-                  },
+                  onTap: () {},
                   child: Container(
                     width: 365,
                     height: 55,
@@ -243,7 +271,7 @@ class CustomPhoneNumberField extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SizedBox(width: 5),
+          const SizedBox(width: 5),
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: selectedCountryCode,
@@ -273,7 +301,7 @@ class CustomPhoneNumberField extends StatelessWidget {
                 if (value == null || value.isEmpty) {
                   return 'Phone Number cannot be empty';
                 } else if (value.length < 8) {
-                  return 'Phone Number must be insert';
+                  return 'Phone Number must be at least 8 digits';
                 }
                 return null;
               },

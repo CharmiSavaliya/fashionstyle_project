@@ -1,23 +1,64 @@
-import 'package:fashion_project/bottomnavigationbar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fashion_project/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:fashion_project/forgot_password_screen.dart';
 import 'package:fashion_project/sign_up_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fashion_project/bottomnavigationbar.dart'; 
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  SignInScreenState createState() => SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class SignInScreenState extends State<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool rememberMe = false;
   bool _passwordVisible = false;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return;
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in with credential
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+      // Check if user is already registered
+      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+        // Navigate to additional registration steps if needed
+        // Example: Navigator.pushNamed(context, '/additional_registration');
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BottomNavigationbarScreen(),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle errors here
+      print("Error signing in with Google: $e");
+    }
+  }
 
   @override
   void dispose() {
@@ -26,10 +67,11 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    String email = emailController.text;
+  Future<void> _login({required BuildContext context}) async {
+    String email = emailController.text.trim();
     String password = passwordController.text;
 
+    // Validate email and password
     if (email.isEmpty || password.isEmpty) {
       _showSnackBar('Email and Password cannot be empty');
       return;
@@ -46,20 +88,16 @@ class _SignInScreenState extends State<SignInScreen> {
     }
 
     try {
-      User? user = await AuthService().loginUserWithEmailAndPassword(email, password);
-      if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const BottomNavigationbarScreen(),
-          ),
-        );
-      } else {
-        _showSnackBar('Login failed. Please try again.');
-      }
+      // Navigate to main screen after successful sign-in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const BottomNavigationbarScreen(),
+        ),
+      );
     } catch (e) {
-      _showSnackBar('An error occurred. Please try again.');
+      _showSnackBar('Invalid email or password');
+      print("Error logging in: $e");
     }
   }
 
@@ -182,7 +220,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ),
             const SizedBox(height: 40),
             GestureDetector(
-              onTap: _login,
+              onTap: () => _login(context: context),
               child: Container(
                 width: 365,
                 height: 55,
@@ -206,9 +244,6 @@ class _SignInScreenState extends State<SignInScreen> {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 10,
-                ),
                 Expanded(
                   child: Divider(
                     color: Colors.grey,
@@ -216,7 +251,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     "or sign in with",
                     style: TextStyle(fontSize: 15, color: Colors.grey),
@@ -228,35 +263,29 @@ class _SignInScreenState extends State<SignInScreen> {
                     height: 1,
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
               ],
             ),
             const SizedBox(height: 45),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.grey,
-                      width: 1,
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/google.png',
-                      width: 25,
-                      height: 25,
-                      fit: BoxFit.cover,
-                    ),
+            GestureDetector(
+              onTap: signInWithGoogle,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 1,
                   ),
                 ),
-                const SizedBox(width: 10),
-              ],
+                padding: const EdgeInsets.all(16),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/google.png',
+                    width: 25,
+                    height: 25,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 30),
             Row(

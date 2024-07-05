@@ -16,7 +16,7 @@ class BottomNavigationbarScreen extends StatefulWidget {
 class _BottomNavigationbarScreenState extends State<BottomNavigationbarScreen> {
   int currentIndex = 0;
 
-  List screens = const [
+  List<Widget> screens = const [
     HomeScreen(),
     CartScreen(),
     FavouriteScreen(),
@@ -43,33 +43,44 @@ class _BottomNavigationbarScreenState extends State<BottomNavigationbarScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: screens[currentIndex],
-      bottomNavigationBar: ClipRRect(
-        child: BottomAppBar(
-          elevation: 8, 
-          child: Container(
-            height: 70, 
-            width: 50,
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(50), 
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: screens[currentIndex],
+                  ),
+                  const SizedBox(height: 150),
+                ],
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(
-                bottomDataList.length,
-                (index) {
-                  return GestureDetector(
-                    onTap: () {
-                      _onitemTapped(index);
-                    },
-                    child: InkWell(
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: 70,
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(
+                  bottomDataList.length,
+                  (index) {
+                    return GestureDetector(
                       onTap: () {
-                        _onitemTapped(bottomDataList[index].indextext);
+                        _onitemTapped(index);
                       },
                       child: Container(
                         width: 45,
-                        height: 50,
+                        height: 45,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: bottomDataList[index].indextext == currentIndex ? Colors.white : Colors.transparent,
@@ -82,13 +93,13 @@ class _BottomNavigationbarScreenState extends State<BottomNavigationbarScreen> {
                               : const Color.fromARGB(255, 207, 204, 204),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
