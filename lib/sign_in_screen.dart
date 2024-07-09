@@ -1,10 +1,12 @@
+import 'dart:async';
+import 'package:fashion_project/bottomnavigationbar.dart';
+import 'package:fashion_project/forgot_password_screen.dart';
+import 'package:fashion_project/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:fashion_project/forgot_password_screen.dart';
-import 'package:fashion_project/sign_up_screen.dart';
-import 'package:fashion_project/bottomnavigationbar.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -17,9 +19,29 @@ class SignInScreenState extends State<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _passwordVisible = false;
+  bool isLoggedIn = false; // Flag to track login status
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoggedInStatus(); // Check if user is already logged in
+  }
+
+  // Function to check logged in status from shared preferences
+  Future<void> checkLoggedInStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (isLoggedIn) {
+      // Navigate to home screen if already logged in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const BottomNavigationbarScreen()),
+      );
+    }
+  }
 
   Future<void> signInWithGoogle() async {
     try {
@@ -47,17 +69,24 @@ class SignInScreenState extends State<SignInScreen> {
         // Navigate to additional registration steps if needed
         // Example: Navigator.pushNamed(context, '/additional_registration');
       } else {
+        // Save login state
+        saveLoginState();
+        // Navigate to home screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => const BottomNavigationbarScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => const BottomNavigationbarScreen()),
         );
       }
     } catch (e) {
       // Handle errors here
       print("Error signing in with Google: $e");
     }
+  }
+
+  // Function to save login state to shared preferences
+  Future<void> saveLoginState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
   }
 
   @override
@@ -88,12 +117,15 @@ class SignInScreenState extends State<SignInScreen> {
     }
 
     try {
+      // Perform Firebase authentication
+
+      // Save login state
+      saveLoginState();
+
       // Navigate to main screen after successful sign-in
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const BottomNavigationbarScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const BottomNavigationbarScreen()),
       );
     } catch (e) {
       _showSnackBar('Invalid email or password');

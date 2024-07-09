@@ -45,7 +45,8 @@ dependencies:
   google_sign_in: ^6.2.1
   provider: ^6.1.2
   shared_preferences: ^2.2.3
-
+  flutter_countdown_timer: ^4.1.0
+  slide_countdown: ^1.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

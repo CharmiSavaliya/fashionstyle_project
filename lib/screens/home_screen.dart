@@ -5,6 +5,8 @@ import 'package:fashion_project/model/cardview_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slide_countdown/slide_countdown.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int seletected = 0;
+  int selected = 0;
   int _current = 0;
   int _selectedCategory = 0;
   final List<String> imgList = [
@@ -24,24 +26,40 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   final TextEditingController _searchController = TextEditingController();
   String searchQuery = '';
+  late SharedPreferences prefs;
+  @override
+  void initState() {
+    super.initState();
+    _initSharedPreferences();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    bool seen = prefs.getBool('seen') ?? false;
+    print('Seen: $seen');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              topbar(context: context),
-              search(),
-              const SizedBox(height: 10),
-              shoppingCard(),
-              category(),
-              const SizedBox(height: 15),
-              cardView(),
-              const SizedBox(height: 75),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                topbar(context: context),
+                search(),
+                const SizedBox(height: 10),
+                shoppingCard(),
+                category(),
+                const SizedBox(height: 15),
+                cardView(),
+                const SizedBox(height: 75),
+              ],
+            ),
           ),
         ),
       ),
@@ -52,13 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Location",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
-            ),
+          const Text(
+            "Location",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -123,8 +140,8 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: Container(
-            width: 330,
+          child: SizedBox(
+            width: 325,
             height: 42,
             child: TextFormField(
               controller: _searchController,
@@ -144,6 +161,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                            searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 labelText: "Search",
                 labelStyle: const TextStyle(color: Colors.grey),
@@ -151,13 +179,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: Colors.brown),
                 ),
                 isDense: true,
               ),
             ),
           ),
         ),
-        const SizedBox(width: 5),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
@@ -181,10 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
         CarouselSlider(
           items: imgList
               .map((item) => ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: Center(
-                      child: Image.asset(item, fit: BoxFit.cover, width: MediaQuery.of(context).size.width * 0.8),
-                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(item, fit: BoxFit.cover, width: MediaQuery.of(context).size.width * 0.9),
                   ))
               .toList(),
           options: CarouselOptions(
@@ -220,138 +254,198 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget category() {
     List<String> items = ['All', 'Newest', 'Popular', 'Men', 'Women'];
-    int selected = _selectedCategory; 
+    int selected = _selectedCategory;
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          const Row(
-            children: [
-              Text(
-                'Category',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              Text(
-                'See All',
-                style: TextStyle(fontSize: 20, color: Colors.brown),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildCategoryItem('assets/tshirt.svg', 'T-shirt'),
-                const SizedBox(width: 20),
-                _buildCategoryItem('assets/pant.svg', 'Pants'),
-                const SizedBox(width: 20),
-                _buildCategoryItem('assets/jacket.svg', 'Jacket'),
-                const SizedBox(width: 20),
-                _buildCategoryItem('assets/dress.svg', 'Dress'),
-                const SizedBox(width: 20),
-                _buildCategoryItem('assets/pant.svg', 'Pants'),
-              ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        const Row(
+          children: [
+            Text(
+              'Category',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 20),
-          const Row(
+            Spacer(),
+            Text(
+              'See All',
+              style: TextStyle(fontSize: 16, color: Colors.brown),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
             children: [
-              Text(
-                'Flash Sale',
-                style: TextStyle(
-                  fontSize: 24,
-                ),
-              ),
+              _buildCategoryItem('assets/tshirt.svg', 'T-shirt'),
+              const SizedBox(width: 20),
+              _buildCategoryItem('assets/pant.svg', 'Pants'),
+              const SizedBox(width: 20),
+              _buildCategoryItem('assets/jacket.svg', 'Jacket'),
+              const SizedBox(width: 20),
+              _buildCategoryItem('assets/dress.svg', 'Dress'),
+              const SizedBox(width: 20),
+              _buildCategoryItem('assets/pant.svg', 'Pants'),
             ],
           ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 35,
-            width: double.infinity,
-            child: ListView.builder(
-              itemCount: items.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      _selectedCategory = index; // Update selected category
-                    });
-                  },
-                  child: Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(29),
-                      border: Border.all(
-                        color: selected != index ? const Color(0xffD0D5DD) : Colors.transparent,
-                        width: 1.1,
-                      ),
-                      color: selected == index ? Colors.brown : Colors.transparent, // Changed selected color to brown
+        ),
+        const SizedBox(height: 20),
+        Row(
+          children: [
+            const Text(
+              'Flash Sale',
+              style: TextStyle(
+                fontSize: 24,
+              ),
+            ),
+            const Spacer(),
+            const Text(
+              'Closing in : ',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            SlideCountdownSeparated(
+              duration: const Duration(
+                hours: 5,
+              ),
+              slideDirection: SlideDirection.down,
+              onDone: () {},
+              separator: ':',
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.brown),
+              decoration: BoxDecoration(
+                color: const Color(0xffF7F2Ed),
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 35,
+          width: double.infinity,
+          child: ListView.builder(
+            itemCount: items.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedCategory = index;
+                  });
+                },
+                child: Container(
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(29),
+                    border: Border.all(
+                      color: selected != index ? const Color(0xffD0D5DD) : Colors.transparent,
+                      width: 1.1,
                     ),
-                    child: Center(
-                      child: Text(
-                        items[index],
-                        style: TextStyle(
-                          color:
-                              selected == index ? Colors.white : Colors.black, // Text color change based on selection
-                          fontSize: 16,
-                        ),
+                    color: selected == index ? Colors.brown : Colors.transparent,
+                  ),
+                  child: Center(
+                    child: Text(
+                      items[index],
+                      style: TextStyle(
+                        color: selected == index ? Colors.white : Colors.black,
+                        fontSize: 16,
                       ),
                     ),
                   ),
-                );
-              },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryItem(String iconPath, String label) {
+    return GestureDetector(
+      onTap: () {
+        switch (label) {
+          case 'T-shirt':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TShirtScreen()),
+            );
+            break;
+          case 'Pants':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PantsScreen()),
+            );
+            break;
+          case 'Jacket':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => JacketScreen()),
+            );
+            break;
+          case 'Dress':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DressScreen()),
+            );
+            break;
+
+          default:
+            break;
+        }
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 35,
+            backgroundColor: const Color(0xffF7F2Ed),
+            child: SvgPicture.asset(
+              iconPath,
+              width: 30,
+              height: 30,
+              colorFilter: const ColorFilter.mode(Colors.brown, BlendMode.srcIn),
             ),
           ),
+          const SizedBox(height: 5),
+          Text(label),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryItem(String iconPath, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 35,
-          backgroundColor: Colors.brown[100],
-          child: SvgPicture.asset(
-            iconPath,
-            width: 30,
-            height: 30,
-            colorFilter: const ColorFilter.mode(Colors.brown, BlendMode.srcIn),
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(label),
-      ],
-    );
-  }
-
   Widget cardView() {
     List<ProductModel> productList = [];
-    if (seletected != 0) {
-      productList.addAll(productAll.where((element) => element.categoryId == seletected).toList());
+
+    // Filter products based on selected category
+    if (_selectedCategory != 0) {
+      String selectedCategoryName = categoryList.firstWhere((category) => category.index == _selectedCategory).name;
+      print('Selected Category: $selectedCategoryName');
+      productList = productAll.where((product) {
+        bool matchesCategory = product.category == selectedCategoryName;
+        print('Product: ${product.productname}, Category: ${product.category}, Matches: $matchesCategory');
+        return matchesCategory;
+      }).toList();
     } else {
-      productList.addAll(productAll);
+      productList = List.from(productAll);
     }
+
     // Filter products based on search query
     if (searchQuery.isNotEmpty) {
       productList = productList.where((product) {
         return product.productname.toLowerCase().contains(searchQuery.toLowerCase());
       }).toList();
     }
+
     return GridView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: (65 / 75),
+        childAspectRatio: (65 / 80),
         crossAxisSpacing: 0,
         mainAxisSpacing: 0,
       ),
@@ -373,8 +467,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(5),
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -383,12 +476,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Column(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(10),
                       child: Image.asset(
                         product.image,
-                        fit: BoxFit.cover, // Ensure the image covers the entire area
-                        width: double.infinity, // Expand to fill available width
-                        height: 150, // Adjust height as needed
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 160,
                       ),
                     ),
                     const Spacer(),
@@ -404,9 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   product.productname,
                                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 ),
-                                const SizedBox(
-                                  width: 40,
-                                ),
+                                const SizedBox(width: 33),
                                 const Icon(
                                   Icons.star,
                                   color: Colors.amber,
@@ -458,6 +549,62 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class TShirtScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('T-shirt Screen'),
+      ),
+      body: const Center(
+        child: Text('T-shirt Screen Content'),
+      ),
+    );
+  }
+}
+
+class PantsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pants Screen'),
+      ),
+      body: const Center(
+        child: Text('Pants Screen Content'),
+      ),
+    );
+  }
+}
+
+class JacketScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jacket Screen'),
+      ),
+      body: const Center(
+        child: Text('Jacket Screen Content'),
+      ),
+    );
+  }
+}
+
+class DressScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dress Screen'),
+      ),
+      body: const Center(
+        child: Text('Dress Screen Content'),
+      ),
     );
   }
 }

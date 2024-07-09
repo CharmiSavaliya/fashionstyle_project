@@ -1,5 +1,6 @@
 import 'package:fashion_project/Provider/favourite_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'model/cardview_model.dart';
 
@@ -69,28 +70,33 @@ class DetailScreenState extends State<DetailScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Female's Style",
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
                     Text(
-                      widget.product.productname,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      widget.product.style,
+                      style: const TextStyle(color: Colors.grey, fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Colors.amber),
-                        const SizedBox(width: 4),
                         Text(
-                          widget.product.rating,
-                          style: const TextStyle(fontSize: 18),
+                          widget.product.productname,
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber),
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.product.rating,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -145,7 +151,14 @@ class DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(height: 8),
                     Row(
-                      children: [Colors.brown, Colors.black, Colors.white].map((color) {
+                      children: [
+                        const Color(0xffD4A88E),
+                        Colors.brown,
+                        const Color(0xffD99567),
+                        const Color(0xffB17552),
+                        const Color(0xffB9773B),
+                        Colors.black,
+                      ].map((color) {
                         return Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: CircleAvatar(
@@ -156,34 +169,80 @@ class DetailScreenState extends State<DetailScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      "Total Price",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.product.price,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.brown),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Add to cart functionality
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.brown,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    Container(
+                      height: 120,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(16),
+                          topLeft: Radius.circular(16),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            const Text(
+                              "Total Price",
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  widget.product.price,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Spacer(),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Add to cart functionality
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.brown,
+                                    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 46),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/shopping.svg', // Path to your SVG asset
+                                          width: 24,
+                                          height: 24,
+                                          color: Colors.white, // Adjust the color if needed
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text(
+                                          "Add to Cart",
+                                          style: TextStyle(fontSize: 20, color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "Add to Cart",
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ),
-                    ),
+                    )
                   ],
                 ),
               ),
