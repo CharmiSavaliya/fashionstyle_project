@@ -12,7 +12,20 @@
           "package_name": "com.example.fashion_project"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "515704119121-jpg17olhbkhbha2vgp5alcfaeu65sc3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fashion_project",
+            "certificate_hash": "2d1a74c7b14ab34e9d6d9985913d804090c8a3ff"
+          }
+        },
+        {
+          "client_id": "515704119121-un40jc3j3hed2lrk0b2sulof99vnqq35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDivYhgPbP64lQjG0eV4P0bciccsa7cliI"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515704119121-un40jc3j3hed2lrk0b2sulof99vnqq35.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "515704119121-iqa7m34i17g3o1o99eb3g8g6r7j3qoqo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.checkDemo"
+              }
+            }
+          ]
         }
       }
     }

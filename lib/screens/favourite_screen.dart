@@ -1,4 +1,5 @@
 import 'package:fashion_project/Provider/favourite_provider.dart';
+import 'package:fashion_project/bottomnavigationbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +19,16 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('My Wishlist'),
+          title: const Text('Wishlist'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const BottomNavigationbarScreen()),
+              );
+            },
+          ),
         ),
         body: GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 10),

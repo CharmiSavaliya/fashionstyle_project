@@ -33,7 +33,7 @@ class SignInScreenState extends State<SignInScreen> {
   // Function to check logged in status from shared preferences
   Future<void> checkLoggedInStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    isLoggedIn = prefs.getBool('seen') ?? false;
     if (isLoggedIn) {
       // Navigate to home screen if already logged in
       Navigator.pushReplacement(
@@ -86,7 +86,7 @@ class SignInScreenState extends State<SignInScreen> {
   // Function to save login state to shared preferences
   Future<void> saveLoginState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
+    await prefs.setBool('seen', true);
   }
 
   @override

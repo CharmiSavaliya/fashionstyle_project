@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fashion_project/auth_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -54,8 +55,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     try {
-      dynamic user = await AuthService().createUserWithEmailAndPassword(email, password);
+      dynamic user = await AuthService().createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+        name: name,
+      );
+      print('>>>>>>>>>>> 111222');
       if (user is User) {
+        saveLoginState();
+
         await user.updateDisplayName(name);
         await Navigator.pushReplacement(
           context,
@@ -71,6 +79,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } catch (e) {
       print(e);
     }
+  }
+
+  // Function to save login state to shared preferences
+  Future<void> saveLoginState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('seen', true);
   }
 
   void _showSnackBar(String message) {

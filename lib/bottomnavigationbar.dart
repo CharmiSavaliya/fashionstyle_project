@@ -1,10 +1,11 @@
-import 'package:fashion_project/model/bottom_data_model.dart';
-import 'package:fashion_project/profile_screen.dart';
-import 'package:fashion_project/screens/cart_screen.dart';
-import 'package:fashion_project/screens/chat_screen.dart';
-import 'package:fashion_project/screens/favourite_screen.dart';
-import 'package:fashion_project/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'profile_screen.dart';
+import 'screens/cart_screen.dart';
+import 'screens/chat_screen.dart';
+import 'screens/favourite_screen.dart';
+import 'screens/home_screen.dart';
+import 'model/bottom_data_model.dart';
 
 class BottomNavigationbarScreen extends StatefulWidget {
   const BottomNavigationbarScreen({Key? key}) : super(key: key);
@@ -16,7 +17,8 @@ class BottomNavigationbarScreen extends StatefulWidget {
 class _BottomNavigationbarScreenState extends State<BottomNavigationbarScreen> {
   int currentIndex = 0;
 
-  List<Widget> screens = const [
+  // Remove `const` keyword here
+  List<Widget> screens = [
     HomeScreen(),
     CartScreen(),
     FavouriteScreen(),

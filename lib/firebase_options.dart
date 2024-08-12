@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'fashion-ui',
     storageBucket: 'fashion-ui.appspot.com',
   );
+
 }

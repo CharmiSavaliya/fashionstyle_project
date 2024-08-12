@@ -1,6 +1,7 @@
 import 'package:fashion_project/Provider/favourite_provider.dart';
+import 'package:fashion_project/bottomnavigationbar.dart';
 import 'package:fashion_project/firebase_options.dart';
-import 'package:fashion_project/screens/home_screen.dart';
+import 'package:fashion_project/screens/cartmodel.dart';
 import 'package:fashion_project/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +33,14 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FavoriteModel()),
+        ChangeNotifierProvider(create: (_) => CartModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: seen ? const HomeScreen() : const SplashScreen(),
+        home: seen ? const BottomNavigationbarScreen() : const SplashScreen(),
       ),
     );
   }

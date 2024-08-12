@@ -181,15 +181,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(20),
                   borderSide: const BorderSide(color: Colors.grey),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Colors.grey),
-                ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: const BorderSide(color: Colors.brown),
                 ),
                 isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
               ),
             ),
           ),
@@ -278,15 +275,13 @@ class _HomeScreenState extends State<HomeScreen> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _buildCategoryItem('assets/tshirt.svg', 'T-shirt'),
+              _buildCategoryItem('assets/tshirt.svg', 'T-shirt', tshirtall),
               const SizedBox(width: 20),
-              _buildCategoryItem('assets/pant.svg', 'Pants'),
+              _buildCategoryItem('assets/pant.svg', 'Pants', pantsall),
               const SizedBox(width: 20),
-              _buildCategoryItem('assets/jacket.svg', 'Jacket'),
+              _buildCategoryItem('assets/jacket.svg', 'Jacket', jacketsall),
               const SizedBox(width: 20),
-              _buildCategoryItem('assets/dress.svg', 'Dress'),
-              const SizedBox(width: 20),
-              _buildCategoryItem('assets/pant.svg', 'Pants'),
+              _buildCategoryItem('assets/dress.svg', 'Dress', Dressall),
             ],
           ),
         ),
@@ -366,32 +361,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryItem(String iconPath, String label) {
+  Widget _buildCategoryItem(String iconPath, String label, List<Product> products) {
     return GestureDetector(
       onTap: () {
         switch (label) {
           case 'T-shirt':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TShirtScreen()),
+              MaterialPageRoute(builder: (context) => TShirtScreen(products: products)),
             );
             break;
           case 'Pants':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => PantsScreen()),
+              MaterialPageRoute(builder: (context) => PantsScreen(products: products)),
             );
             break;
           case 'Jacket':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => JacketScreen()),
+              MaterialPageRoute(builder: (context) => JacketScreen(products: products)),
             );
             break;
           case 'Dress':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DressScreen()),
+              MaterialPageRoute(builder: (context) => DressScreen(products: products)),
             );
             break;
 
@@ -554,56 +549,284 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class TShirtScreen extends StatelessWidget {
+  final List<Product> products;
+
+  const TShirtScreen({Key? key, required this.products}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('T-shirt Screen'),
       ),
-      body: const Center(
-        child: Text('T-shirt Screen Content'),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.75, // Adjust as per your design
+        ),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          var product = products[index];
+          return GestureDetector(
+            onTap: () {
+              // Handle item tap if needed
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                    child: Image.asset(
+                      product.image,
+                      fit: BoxFit.cover,
+                      height: 150,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.productname,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          product.price,
+                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 class PantsScreen extends StatelessWidget {
+  final List<Product> products;
+
+  const PantsScreen({Key? key, required this.products}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pants Screen'),
       ),
-      body: const Center(
-        child: Text('Pants Screen Content'),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.75, // Adjust as per your design
+        ),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          var product = products[index];
+          return GestureDetector(
+            onTap: () {
+              // Handle item tap if needed
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                    child: Image.asset(
+                      product.image,
+                      fit: BoxFit.cover,
+                      height: 150,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.productname,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          product.price,
+                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 class JacketScreen extends StatelessWidget {
+  final List<Product> products;
+
+  const JacketScreen({Key? key, required this.products}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jacket Screen'),
       ),
-      body: const Center(
-        child: Text('Jacket Screen Content'),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.75, // Adjust as per your design
+        ),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          var product = products[index];
+          return GestureDetector(
+            onTap: () {
+              // Handle item tap if needed
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                    child: Image.asset(
+                      product.image,
+                      fit: BoxFit.cover,
+                      height: 150,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.productname,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          product.price,
+                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
 class DressScreen extends StatelessWidget {
+  final List<Product> products;
+
+  const DressScreen({Key? key, required this.products}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dress Screen'),
       ),
-      body: const Center(
-        child: Text('Dress Screen Content'),
+      body: GridView.builder(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.75, // Adjust as per your design
+        ),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          var product = products[index];
+          return GestureDetector(
+            onTap: () {
+              // Handle item tap if needed
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              elevation: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                    child: Image.asset(
+                      product.image,
+                      fit: BoxFit.cover,
+                      height: 150,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.productname,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          product.price,
+                          style: const TextStyle(fontSize: 14, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

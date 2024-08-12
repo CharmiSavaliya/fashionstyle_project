@@ -209,3 +209,146 @@ List<ProductModel> productAll = [
     isselected: false,
   ),
 ];
+
+class Product {
+  final String productname;
+  final String image;
+  final String price;
+  final String rating;
+  final String category;
+  final String style;
+  bool isselected;
+
+  Product({
+    required this.productname,
+    required this.image,
+    required this.price,
+    required this.rating,
+    required this.category,
+    required this.style,
+    required this.isselected,
+  });
+}
+
+List<Product> tshirtall = [
+  Product(
+    productname: "Women T-Shirt",
+    image: "assets/wtshirt.jpeg",
+    price: "\$33.00",
+    rating: "4.9",
+    category: "Women",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "Women T-Shirt",
+    image: "assets/wtshirt.jpeg",
+    price: "\$33.00",
+    rating: "4.9",
+    category: "Women",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "Women T-Shirt",
+    image: "assets/wtshirt.jpeg",
+    price: "\$33.00",
+    rating: "4.9",
+    category: "Women",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  // Add more t-shirts here...
+];
+
+List<Product> pantsall = [
+  Product(
+    productname: "Women pent",
+    image: "assets/wpent.jpeg",
+    price: "\$30.00",
+    rating: "4.9",
+    category: "Women",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "Men pent",
+    image: "assets/mpent0.jpeg",
+    price: "\$73.00",
+    rating: "4.9",
+    category: "Men",
+    style: "Men's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "Women pent",
+    image: "assets/wpent2.jpeg",
+    price: "\$33.00",
+    rating: "4.9",
+    category: "Popular",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  // Add more pants here...
+];
+
+List<Product> jacketsall = [
+  Product(
+    productname: "Women Jacket",
+    image: "assets/wjacket.jpeg",
+    price: " \$23.00",
+    rating: "5.0",
+    category: "Newest",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "Men Jacket",
+    image: "assets/mjacket.jpeg",
+    price: "\$35.00",
+    rating: "5.0",
+    category: "Men",
+    style: "Men's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "women jacket",
+    image: "assets/wjacket0.jpeg",
+    price: "\$33.00",
+    rating: "4.9",
+    category: "Women",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  // Add more jackets here...
+];
+List<Product> Dressall = [
+  Product(
+    productname: "Women Jacket",
+    image: "assets/wjacket.jpeg",
+    price: " \$23.00",
+    rating: "5.0",
+    category: "Newest",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "Men Jacket",
+    image: "assets/mjacket.jpeg",
+    price: "\$35.00",
+    rating: "5.0",
+    category: "Men",
+    style: "Men's Style",
+    isselected: false,
+  ),
+  Product(
+    productname: "women jacket",
+    image: "assets/wjacket0.jpeg",
+    price: "\$33.00",
+    rating: "4.9",
+    category: "Women",
+    style: "Female's Style",
+    isselected: false,
+  ),
+  // Add more jackets here...
+];

@@ -1,32 +1,49 @@
-import 'dart:developer';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<dynamic> createUserWithEmailAndPassword(String email, String password) async {
+  get currentUser => null;
+
+  Future<dynamic> createUserWithEmailAndPassword({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
     try {
-      UserCredential credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential credential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      print('>>>>>>>>>>>> 111 $credential');
+      // Save user data to Firestore
+      await _firestore.collection('users').doc(credential.user?.uid).set({
+        'email': email,
+        'name': name,
+        'password': password,
+        // add other user fields here as needed
+      });
       return credential.user;
     } on FirebaseAuthException catch (e) {
+      print('>>>>>>>>>>>> 111555 $e');
+
       if (e.code == 'weak-password') {
         return 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
         return 'The account already exists for that email.';
       }
     } catch (e) {
+      print('?>>>>>> $e');
       return null;
     }
   }
 
   Future<dynamic> loginUserWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential credential = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -40,17 +57,18 @@ class AuthService {
     }
   }
 
-    Future<void> signout() async {
+  Future<void> signout() async {
     try {
-      await _auth.signOut();
+      await auth.signOut();
     } catch (e) {
       if (e is FirebaseAuthException) {
-        log("FirebaseAuthException: ${e.message}");
+        print("FirebaseAuthException: ${e.message}");
       } else {
-        log("An error occurred: ${e.toString()}");
+        print("An error occurred: ${e.toString()}");
       }
     }
   }
+
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -65,6 +83,37 @@ class AuthService {
     );
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    UserCredential userCredential = await auth.signInWithCredential(credential);
+
+    return userCredential.user;
+  }
+
+  // Method to save or update user profile data
+  Future<void> updateUserProfile(String name, String phoneNumber, String gender, String countryCode,
+      {String? imageUrl}) async {
+    User? user = auth.currentUser;
+    print("............$user");
+    if (user != null) {
+      await _firestore.collection('users').doc(user.uid).update(
+        {
+          'name': name,
+          'phoneNumber': phoneNumber,
+          'gender': gender,
+          'countryCode': countryCode,
+          'imageUrl': imageUrl,
+        },
+      );
+    }
+  }
+
+  // Method to get user profile data
+  Future getUserProfile() async {
+    User? user = auth.currentUser;
+    if (user != null) {
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+      print("==========>>>${userDoc.data()}");
+      return userDoc.data();
+    }
+    return null;
   }
 }
